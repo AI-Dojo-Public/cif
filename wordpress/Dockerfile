@@ -15,6 +15,8 @@ ENV WP_ADMIN_PASSWORD=wordpress
 #root@d3fbc8d7d6c5:/# export DB_PASSWORD=wordpress
 #root@d3fbc8d7d6c5:/# export DB_HOST=127.0.0.1
 
+# TODO: add database setup
+
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
