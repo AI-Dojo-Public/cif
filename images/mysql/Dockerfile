@@ -1,6 +1,6 @@
 FROM base AS mysql
 
-RUN apt update && apt install -y mysql-server
+ENV MYSQL_PORT=3306
+ENV MYSQL_HOST=127.0.0.1
 
-# Use -D for running it in the background
-#CMD ["mysqld"]
+RUN apt update && apt install -y mysql-server
