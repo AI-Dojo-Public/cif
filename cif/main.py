@@ -2,6 +2,7 @@ import os
 import shutil
 from uuid import uuid1
 from docker import from_env
+from argparse import ArgumentParser
 
 
 PATH_BASE = os.path.dirname(__file__).rsplit("/", 1)[0]
@@ -37,12 +38,13 @@ def update_image(image_directory: str, image_name: str, previous_tag: str):
             dockerfile.writelines(lines)
 
 
-def build_image(image_directory: str, image_tag: str) -> str:
+def build_image(image_directory: str, image_tag: str):
     docker_client.images.build(path=image_directory, tag=image_tag)
 
 
 def image_pipeline(build_id: str, image_name: str, previous_tag: str) -> str:
-    image_tag = f"{GITLAB_REPOSITORY}{image_name}".replace("_", "")
+    previous_tag_name = previous_tag.rsplit('/', 1)[1] + '_' if previous_tag else ''
+    image_tag = f"{GITLAB_REPOSITORY}{previous_tag_name}{image_name.replace('_', '')}"
     image_directory = copy_image(build_id, image_name)
     update_image(image_directory, image_name, previous_tag)
     build_image(image_directory, image_tag)
@@ -50,14 +52,17 @@ def image_pipeline(build_id: str, image_name: str, previous_tag: str) -> str:
     return image_tag
 
 
-def main(required_images: list[str]):
+def main():
+    parser = ArgumentParser()
+    parser.add_argument('args', nargs="*")
+    required_images = parser.parse_args().args
+
     build_id = str(uuid1())
     images: list[str] = ["_base"] + required_images
     image_tags: list[str] = list()
     for image in images:
+        print(f"Building image {image}.. ")
         tag = image_pipeline(build_id, image, image_tags[-1] if len(image_tags) > 0 else "")
         image_tags.append(tag)
-
-
-if __name__ == '__main__':
-    main(["ssh"])
+        print("Success.")
+        print(f"Tagged as {tag}\n")

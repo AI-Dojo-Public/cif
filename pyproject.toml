@@ -4,11 +4,14 @@ version = "0.1.0"
 description = ""
 authors = ["Jiri Raja <raja@ics.muni.cz>"]
 readme = "README.md"
+include = ["images"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 docker = "^7.1.0"
 
+[tool.poetry.scripts]
+cif = 'cif.main:main'
 
 [build-system]
 requires = ["poetry-core"]
