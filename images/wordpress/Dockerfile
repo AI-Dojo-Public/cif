@@ -1,6 +1,11 @@
 FROM base AS wordpress
 
-RUN apt update && apt install -y wget php unzip php-mysql
+RUN apt update && apt install -y \
+    wget \
+    php \
+    unzip \
+    php-mysql \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN wget https://wordpress.org/latest.zip
 RUN unzip latest.zip
