@@ -13,6 +13,22 @@ GITLAB_REPOSITORY = "repository/"
 docker_client = from_env()
 
 
+def update_firehole_config():
+    # TODO: needs to be dynamic depending on the present services
+    config = {
+        "applications": [
+            {
+                "type": "http_s",
+                "host": "0.0.0.0",
+                "port": 80,
+                "origin_host": "127.0.0.1",
+                "origin_port": 8000,
+                "vulnerabilities": ["cve-2016-10073"]
+            }
+        ]
+    }
+
+
 def copy_image(build_id: str, image_name: str) -> str:
     image_directory: str = os.path.join(PATH_IMAGES, image_name)
     tmp_image_directory: str = os.path.join(PATH_BUILD, build_id, image_name)
@@ -35,7 +51,7 @@ def update_image(image_directory: str, image_name: str, previous_tag: str):
                 lines[i] = line.replace("/entrypoints", f"/entrypoints/entrypoint-{image_name}.sh")
 
     with open(os.path.join(image_directory, "Dockerfile"), "w") as dockerfile:
-            dockerfile.writelines(lines)
+        dockerfile.writelines(lines)
 
 
 def build_image(image_directory: str, image_tag: str):
@@ -43,9 +59,11 @@ def build_image(image_directory: str, image_tag: str):
 
 
 def image_pipeline(build_id: str, image_name: str, previous_tag: str) -> str:
-    previous_tag_name = previous_tag.rsplit('/', 1)[1] + '_' if previous_tag else ''
+    previous_tag_name = previous_tag.rsplit("/", 1)[1] + "_" if previous_tag else ""
     image_tag = f"{GITLAB_REPOSITORY}{previous_tag_name}{image_name.replace('_', '')}"
     image_directory = copy_image(build_id, image_name)
+    if image_name == "firehole":
+        update_firehole_config()
     update_image(image_directory, image_name, previous_tag)
     build_image(image_directory, image_tag)
 
@@ -54,7 +72,7 @@ def image_pipeline(build_id: str, image_name: str, previous_tag: str) -> str:
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('args', nargs="*")
+    parser.add_argument("args", nargs="*")
     required_images = parser.parse_args().args
 
     build_id = str(uuid1())

@@ -25,15 +25,10 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
 
 COPY wp-config.php /var/www/html/
 COPY docker-php.conf /etc/apache2/conf-available/
+COPY ports.conf /etc/apache2/ports.conf
 
 RUN a2dismod mpm_event && a2enmod mpm_prefork
 RUN a2enconf docker-php
-
-# TODO: needs a better solution?
-RUN echo "export WORDPRESS_DB_USER=$WORDPRESS_DB_USER" >> /etc/apache2/envvars
-RUN echo "export WORDPRESS_DB_PASSWORD=$WORDPRESS_DB_PASSWORD" >> /etc/apache2/envvars
-RUN echo "export WORDPRESS_DB_HOST=$WORDPRESS_DB_HOST" >> /etc/apache2/envvars
-RUN echo "export WORDPRESS_DEBUG=$WORDPRESS_DEBUG" >> /etc/apache2/envvars
 
 COPY entrypoint.sh /entrypoints
 
