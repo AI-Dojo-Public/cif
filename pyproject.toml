@@ -7,7 +7,7 @@ readme = "README.md"
 include = ["images"]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 docker = "^7.1.0"
 
 [tool.poetry.group.dev.dependencies]
