@@ -18,6 +18,11 @@ ENV WORDPRESS_DB_USER=wordpress
 ENV WORDPRESS_DB_PASSWORD=wordpress
 ENV WORDPRESS_DB_HOST=127.0.0.1
 ENV WORDPRESS_DEBUG=false
+ENV WORDPRESS_CERTIFICATE="/"
+ENV WORDPRESS_PRIVATE_KEY="/"
+ENV WORDPRESS_HOST=127.0.0.1
+ENV WORDPRESS_PORT=80
+ENV WORDPRESS_TITLE=Placeholder
 
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x wp-cli.phar && \
@@ -25,7 +30,6 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
 
 COPY wp-config.php /var/www/html/
 COPY docker-php.conf /etc/apache2/conf-available/
-COPY ports.conf /etc/apache2/ports.conf
 
 RUN a2dismod mpm_event && a2enmod mpm_prefork
 RUN a2enconf docker-php
