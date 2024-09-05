@@ -1,7 +1,10 @@
 FROM base AS ftp
 
-ENV FTP_PORT=21
-ENV FTP_HOST=127.0.0.1
+ARG FTP_PORT=21
+ARG FTP_HOST=0.0.0.0
+
+ENV FTP_PORT=${FTP_PORT}
+ENV FTP_HOST=${FTP_HOST}
 
 RUN apt update && apt install -y \
     vsftpd \

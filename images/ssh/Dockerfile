@@ -1,7 +1,10 @@
 FROM base AS ssh
 
-ENV SSH_PORT=22
-ENV SSH_HOST=127.0.0.1
+ARG SSH_PORT=22
+ARG SSH_HOST=0.0.0.0
+
+ENV SSH_PORT=${SSH_PORT}
+ENV SSH_HOST=${SSH_HOST}
 
 RUN apt update && apt install -y \
     openssh-server \
