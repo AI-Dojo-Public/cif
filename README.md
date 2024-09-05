@@ -12,8 +12,18 @@ pipx install cif --index-url https://gitlab.ics.muni.cz/api/v4/projects/7197/pac
 
 ## Usage
 ```shell
-cif firehole ftp mysql ssh wordpress
+cif -h
 ```
+
+### Example
+```shell
+cif -r registry.gitlab.ics.muni.cz:443/ai-dojo/cif -fc /home/sad/dev/csirt/ai-dojo/firehole/config.yml -v WORDPRESS_HOSTNAME=127.0.0.1 -v WORDPRESS_HOST=127.0.0.1 -v WORDPRESS_PORT=8000 -v WORDPRESS_TITLE=asd firehole ftp mysql ssh wordpress
+```
+
+```shell
+docker run --network host -it --rm registry.gitlab.ics.muni.cz:443/ai-dojo/cif/base_firehole_ftp_mysql_ssh_wordpress bash
+```
+
 
 ## Adding an image
 Create a directory with a unique name in the `cif/images/` directory. Create `Dockerfile` and `entrypoint.sh` inside it.
