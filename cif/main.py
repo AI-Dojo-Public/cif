@@ -41,7 +41,7 @@ def update_image(image_directory: str, image_name: str, previous_tag: str):
 
 def build_image(image_directory: str, image_tag: str, variables_override: list[str]):
     build_args: dict[str, str] = dict([variable.split("=", 1) for variable in variables_override])
-    docker_client.images.build(path=image_directory, tag=image_tag, buildargs=build_args)
+    docker_client.images.build(path=image_directory, tag=image_tag, buildargs=build_args, rm=True)
 
 
 def image_pipeline(repository: str, build_id: str, image_name: str, previous_tag: str, variables_override: list[str], firehole_config: str) -> str:
