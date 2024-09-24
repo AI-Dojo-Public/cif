@@ -54,6 +54,17 @@ def image_pipeline(repository: str, build_id: str, image_name: str, previous_tag
     return image_tag
 
 
+def build_images(image_repository: str, required_images: list[str], variables_override: list[str], firehole_config: str):
+    build_id = str(uuid1())
+    images: list[str] = ["_base"] + required_images
+    image_tags: list[str] = list()
+    for image in images:
+        print(f"Building image {image}.. ")
+        tag = image_pipeline(image_repository, build_id, image, image_tags[-1] if len(image_tags) > 0 else "", variables_override, firehole_config)
+        image_tags.append(tag)
+        print("Success.")
+        print(f"Tagged as {tag}\n")
+
 def main():
     parser = ArgumentParser()
     parser.add_argument("images", nargs="*")
@@ -65,12 +76,4 @@ def main():
     firehole_config = parser.parse_args().firehole_config
     image_repository = parser.parse_args().repository
 
-    build_id = str(uuid1())
-    images: list[str] = ["_base"] + required_images
-    image_tags: list[str] = list()
-    for image in images:
-        print(f"Building image {image}.. ")
-        tag = image_pipeline(image_repository, build_id, image, image_tags[-1] if len(image_tags) > 0 else "", variables_override, firehole_config)
-        image_tags.append(tag)
-        print("Success.")
-        print(f"Tagged as {tag}\n")
+    build_images(image_repository, required_images, variables_override, firehole_config)
