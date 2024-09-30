@@ -7,6 +7,8 @@ RUN apt update && apt install -y \
     iptables \
     && rm -rf /var/lib/apt/lists/*
 
+RUN userdel ubuntu
+
 COPY entrypoint.sh /entrypoint.sh
 
 RUN mkdir /entrypoints
