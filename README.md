@@ -42,6 +42,10 @@ Test http vulnerability:
 curl localhost -H 'X-Host: test'
 ```
 
+### Using action example
+```shell
+cif client-workstation client-developer -v CLIENT_DEVELOPER_DATABASE_USER=asd -v CLIENT_DEVELOPER_USER_NAME=asd -a create-user:USER_NAME=asd,USER_PASSWORD=asd -a create-user:USER_NAME=test,USER_PASSWORD=test
+```
 
 ## Adding an image
 Create a directory with a unique name in the `cif/images/` directory. Create `Dockerfile` and `entrypoint.sh` inside it.
@@ -52,9 +56,15 @@ The Dockerfile must contain the following:
 ```dockerfile
 FROM base AS <service>
 
-ENV <SERVICE>_PORT=6996
-ENV <SERVICE>_HOST=127.0.0.1
+ARG <SERVICE>_PORT=22
+ARG <SERVICE>_HOST=0.0.0.0
+
+ENV <SERVICE>_PORT=${<SERVICE>_PORT}
+ENV <SERVICE>_HOST=${<SERVICE>_HOST}
 
 COPY entrypoint.sh /entrypoints
 
 ```
+
+## Adding an action
+Same as an image. The only difference is that you need to create it in the `cif/actions/` directory.
