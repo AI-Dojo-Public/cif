@@ -1,11 +1,12 @@
 [tool.poetry]
 name = "cif"
-version = "0.3.0"
+version = "0.4.0"
 description = ""
 authors = ["Jiri Raja <raja@ics.muni.cz>"]
 readme = "README.md"
 include = [
-    { path = "images", format = ["sdist", "wheel"] }
+    { path = "services", format = ["sdist", "wheel"] },
+    { path = "actions", format = ["sdist", "wheel"] },
 ]
 
 [tool.poetry.dependencies]
@@ -15,7 +16,7 @@ python = "^3.11"
 black = "^24.8.0"
 
 [tool.poetry.scripts]
-cif = 'cif.main:main'
+cif = 'cif.cli:main'
 
 [build-system]
 requires = ["poetry-core"]
