@@ -7,4 +7,6 @@ for file in /entrypoints/*; do
     fi
 done
 
+echo "All entrypoints executed!"
+
 exec "$@"

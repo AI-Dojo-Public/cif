@@ -30,7 +30,15 @@ applications:
 ```
 
 ```shell
-cif -r registry.gitlab.ics.muni.cz:443/ai-dojo/cif -fc /tmp/firehole-config.yml -v WORDPRESS_HOSTNAME=127.0.0.1 -v WORDPRESS_HOST=127.0.0.1 -v WORDPRESS_PORT=8000 -v WORDPRESS_TITLE=asd firehole ftp mysql ssh wordpress
+cif \
+  -r registry.gitlab.ics.muni.cz:443/ai-dojo/cif \
+  -fc /tmp/firehole-config.yml \
+  -v WORDPRESS_HOSTNAME=127.0.0.1 \
+  -v WORDPRESS_HOST=127.0.0.1 \
+  -v WORDPRESS_PORT=8000 \
+  -v WORDPRESS_TITLE=asd \
+  mysql wordpress
+
 ```
 
 ```shell
@@ -42,13 +50,8 @@ Test http vulnerability:
 curl localhost -H 'X-Host: test'
 ```
 
-### Using action example
-```shell
-cif client-workstation client-developer -v CLIENT_DEVELOPER_DATABASE_USER=asd -v CLIENT_DEVELOPER_USER_NAME=asd -a create-user:USER_NAME=asd,USER_PASSWORD=asd -a create-user:USER_NAME=test,USER_PASSWORD=test
-```
-
-## Adding an image
-Create a directory with a unique name in the `cif/images/` directory. Create `Dockerfile` and `entrypoint.sh` inside it.
+## Adding a service
+Create a directory with a unique name in the `cif/services/` directory. Create `Dockerfile` and `entrypoint.sh` inside it.
 
 Entrypoint must contain a non-blocking script and will be executed at the startup.
 
