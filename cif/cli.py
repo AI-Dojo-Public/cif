@@ -58,6 +58,7 @@ def loading(stopped: Event):
 
 def main():
     parser = ArgumentParser()
+    parser.add_argument("-t", "--tag")
     parser.add_argument("services", nargs="*")
     parser.add_argument(
         "-v", "--variable", action="append", default=list(), help="Variable for the image. (MY_VAR=var)"
@@ -71,8 +72,8 @@ def main():
         default=list(),
         help="Action with variables. (create-user:USER_NAME=user,USER_PASSWORD=user)",
     )
-    parser.add_argument('-ls', '--list-services', action='store_true', help="Show possible services.")
-    parser.add_argument('-la', '--list-actions', action='store_true', help="Show possible actions.")
+    parser.add_argument("-ls", "--list-services", action="store_true", help="Show possible services.")
+    parser.add_argument("-la", "--list-actions", action="store_true", help="Show possible actions.")
     list_services = parser.parse_args().list_services
     list_actions = parser.parse_args().list_actions
     services = parser.parse_args().services
@@ -80,6 +81,7 @@ def main():
     actions = parser.parse_args().action
     firehole_config = parser.parse_args().firehole_config
     image_repository = parser.parse_args().repository
+    image_tag = parser.parse_args().tag
 
     if list_services:
         pp(available_services())
@@ -97,11 +99,10 @@ def main():
     loading_thread.start()
 
     try:
-        tags = build(image_repository, services, parsed_image_variables, parsed_actions, firehole_config)
+        tags = build(image_repository, services, parsed_image_variables, parsed_actions, firehole_config, image_tag)
     except ValueError as ex:
         print(str(ex))
     else:
-        print(f"All created tags: {' '.join(tags)}")
-        print(f"Final tag: {tags[-1]}")
+        print(f"All created tags:\n{chr(10).join(tags)}")
     finally:
         stop_loading.set()
