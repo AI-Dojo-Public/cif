@@ -57,9 +57,9 @@ def loading(stopped: Event):
 
 
 def main():
-    parser = ArgumentParser()
-    parser.add_argument("-t", "--tag")
-    parser.add_argument("services", nargs="*")
+    parser = ArgumentParser(description="Force multiple services into a single image.")
+    parser.add_argument("-t", "--tag", help="Tag the final image - just like in Docker. (ignores `--repository`)")
+    parser.add_argument("services", nargs="*", help="Services to use.")
     parser.add_argument(
         "-v", "--variable", action="append", default=list(), help="Variable for the image. (MY_VAR=var)"
     )
