@@ -31,18 +31,18 @@ applications:
 
 ```shell
 cif \
-  -r registry.gitlab.ics.muni.cz:443/ai-dojo/cif \
-  -fc /tmp/firehole-config.yml \
-  -v WORDPRESS_HOSTNAME=127.0.0.1 \
-  -v WORDPRESS_HOST=127.0.0.1 \
-  -v WORDPRESS_PORT=8000 \
-  -v WORDPRESS_TITLE=asd \
+  --firehole-config /tmp/firehole-config.yml \
+  --tag my-image-tag \
+  --variable WORDPRESS_HOSTNAME=127.0.0.1 \
+  --variable WORDPRESS_HOST=127.0.0.1 \
+  --variable WORDPRESS_PORT=8000 \
+  --variable WORDPRESS_TITLE=asd \
   mysql wordpress
 
 ```
 
 ```shell
-docker run --network host -it --rm registry.gitlab.ics.muni.cz:443/ai-dojo/cif/base_firehole_ftp_mysql_ssh_wordpress bash
+docker run --network host -it --rm my-image-tag bash
 ```
 
 Test http vulnerability:
