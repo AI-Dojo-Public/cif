@@ -91,6 +91,10 @@ def main():
         pp(available_actions())
         return
 
+    if not image_repository:
+        print("Repository mustn't be empty")
+        return 
+
     parsed_image_variables = parse_image_variables(variables)
     parsed_actions = parse_actions(actions)
 
