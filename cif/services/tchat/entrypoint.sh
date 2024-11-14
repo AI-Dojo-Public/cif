@@ -1,7 +1,16 @@
+# Set environment variables
+cat <<EOF >> /etc/apache2/envvars
+export TCHAT_DB_HOST=$TCHAT_DB_HOST
+export TCHAT_DB_NAME=$TCHAT_DB_NAME
+export TCHAT_DB_CHARSET=$TCHAT_DB_CHARSET
+export TCHAT_DB_USER=$TCHAT_DB_USER
+export TCHAT_DB_PASSWORD=$TCHAT_DB_PASSWORD
+EOF
+
 # Create site config
 cat <<EOF > /etc/apache2/sites-available/000-default.conf
-Listen $CHAT_HOST:$CHAT_PORT http
-<VirtualHost *:CHAT_PORT>
+Listen $TCHAT_HOST:$TCHAT_PORT http
+<VirtualHost *:TCHAT_PORT>
     ServerAdmin webmaster@localhost
     DocumentRoot /var/www/html
     ErrorLog \${APACHE_LOG_DIR}/error.log
