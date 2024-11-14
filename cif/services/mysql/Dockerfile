@@ -10,4 +10,8 @@ RUN apt update && apt install -y \
     mysql-server \
     && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir --parents /tmp/mysql
+
+COPY init.sql /tmp/mysql
+
 COPY entrypoint.sh /entrypoints

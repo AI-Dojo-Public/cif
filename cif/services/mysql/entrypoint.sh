@@ -1,4 +1,10 @@
 mysqld -D --port=$MYSQL_PORT --bind-address=$MYSQL_HOST
 
-# WordPress setup
-mysql --execute "CREATE DATABASE wordpress; CREATE USER 'wordpress'@'%' IDENTIFIED BY 'wordpress'; GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'%'; FLUSH PRIVILEGES;"
+for file in /tmp/mysql/*.sql; do
+    if [ -f "$file" ]; then
+        echo "importing $file"
+        mysql < $file
+    fi
+done
+
+echo "All files imported!"

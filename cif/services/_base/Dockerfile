@@ -11,7 +11,7 @@ RUN userdel ubuntu
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN mkdir /entrypoints
+RUN mkdir --parents /entrypoints
 
 ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]
 CMD [ "tail", "-f", "/dev/null" ]

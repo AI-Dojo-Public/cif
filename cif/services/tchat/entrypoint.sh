@@ -10,7 +10,7 @@ EOF
 # Create site config
 cat <<EOF > /etc/apache2/sites-available/000-default.conf
 Listen $TCHAT_HOST:$TCHAT_PORT http
-<VirtualHost *:TCHAT_PORT>
+<VirtualHost *:$TCHAT_PORT>
     ServerAdmin webmaster@localhost
     DocumentRoot /var/www/html
     ErrorLog \${APACHE_LOG_DIR}/error.log
