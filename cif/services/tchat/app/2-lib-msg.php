@@ -71,11 +71,11 @@ class Message {
 }
 
 // (G) DATABASE SETTINGS - CHANGE TO YOUR OWN!
-define("DB_HOST", "wordpress_db_node");
-define("DB_NAME", "chat");
-define("DB_CHARSET", "utf8mb4");
-define("DB_USER", "cdri");
-define("DB_PASSWORD", "cdri");
+define("DB_HOST", getenv("TCHAT_DB_HOST"));
+define("DB_NAME", getenv("TCHAT_DB_NAME"));
+define("DB_CHARSET", getenv("TCHAT_DB_CHARSET"));
+define("DB_USER", getenv("TCHAT_DB_USER"));
+define("DB_PASSWORD", getenv("TCHAT_DB_PASSWORD"));
 
 // (H) MESSAGE OBJECT
 $_MSG = new Message();
