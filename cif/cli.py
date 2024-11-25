@@ -74,6 +74,7 @@ def main():
     )
     parser.add_argument("-ls", "--list-services", action="store_true", help="Show possible services.")
     parser.add_argument("-la", "--list-actions", action="store_true", help="Show possible actions.")
+    parser.add_argument("-p", "--package", action="append", default=list(), help="System package to install.")
     list_services = parser.parse_args().list_services
     list_actions = parser.parse_args().list_actions
     services = parser.parse_args().services
@@ -82,6 +83,7 @@ def main():
     firehole_config = parser.parse_args().firehole_config
     image_repository = parser.parse_args().repository
     image_tag = parser.parse_args().tag
+    packages = parser.parse_args().package
 
     if list_services:
         pp(available_services())
@@ -93,7 +95,7 @@ def main():
 
     if not image_repository:
         print("Repository mustn't be empty")
-        return 
+        return
 
     parsed_image_variables = parse_image_variables(variables)
     parsed_actions = parse_actions(actions)
@@ -103,7 +105,9 @@ def main():
     loading_thread.start()
 
     try:
-        tags = build(image_repository, services, parsed_image_variables, parsed_actions, firehole_config, image_tag)
+        tags = build(
+            image_repository, services, parsed_image_variables, parsed_actions, firehole_config, image_tag, packages
+        )
     except ValueError as ex:
         print(str(ex))
     else:

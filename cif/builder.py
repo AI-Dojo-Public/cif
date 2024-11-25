@@ -18,8 +18,10 @@ def copy_definition(build_id: str, image_name: str, additional_files: list[tuple
     return tmp_image_directory
 
 
-def update_dockerfile(definition_directory: str, image_name: str, previous_tag: str):
+def update_dockerfile(definition_directory: str, image_name: str, previous_tag: str, packages: list[str]):
     if image_name == "_base":
+        with open(os.path.join(definition_directory, "Dockerfile"), "a") as dockerfile:
+            dockerfile.write(f"\nRUN apt update && apt install -y {' '.join(packages)} && rm -rf /var/lib/apt/lists/*")
         return
 
     with open(os.path.join(definition_directory, "Dockerfile")) as dockerfile:
@@ -61,18 +63,24 @@ def image_pipeline(
     previous_tag: str,
     variables: dict[str, str],
     additional_files: list[tuple[str, str]],
+    packages: list[str],
 ) -> str:
     previous_tag_name = previous_tag.rsplit("/", 1)[1] + "_" if previous_tag else ""
     image_tag = f"{repository}{previous_tag_name}{image_name.replace('_', '')}"
     image_directory = copy_definition(build_id, image_name, additional_files)
-    update_dockerfile(image_directory, image_name, previous_tag)
+    update_dockerfile(image_directory, image_name, previous_tag, packages)
     build_docker_image(image_directory, image_tag, variables)
 
     return image_tag
 
 
 def build_services(
-    build_id: str, image_repository: str, required_images: list[str], variables: dict[str, str], firehole_config: str
+    build_id: str,
+    image_repository: str,
+    required_images: list[str],
+    variables: dict[str, str],
+    firehole_config: str,
+    packages: list[str],
 ) -> list[str]:
     services: list[str] = ["_base"] + required_images
     if firehole_config:
@@ -81,7 +89,7 @@ def build_services(
     for service in services:
         additional_files = [(firehole_config, "config.yml")] if service == "_firehole" else []
         previous_tag = image_tags[-1] if image_tags else ""
-        tag = image_pipeline(image_repository, build_id, service, previous_tag, variables, additional_files)
+        tag = image_pipeline(image_repository, build_id, service, previous_tag, variables, additional_files, packages)
         image_tags.append(tag)
 
     return image_tags
@@ -98,7 +106,7 @@ def copy_action(build_id: str, image_name: str, action_id: str) -> str:
 def perform_action(build_id: str, previous_tag: str, action: str, action_id: str, variables: dict[str, str]) -> str:
     new_image_tag = f"{previous_tag}-{action_id}"
     image_directory = copy_action(build_id, action, action_id)
-    update_dockerfile(image_directory, f"{action}-{action_id}", previous_tag)
+    update_dockerfile(image_directory, f"{action}-{action_id}", previous_tag, [])
     build_docker_image(image_directory, new_image_tag, variables)
 
     return new_image_tag
@@ -121,6 +129,7 @@ def build(
     actions: list[tuple[str, dict[str, str]]],
     firehole_config: str,
     image_tag: str | None,
+    packages: list[str],
 ) -> list[str]:
     """
     Build image containing the defined services and actions.
@@ -128,8 +137,9 @@ def build(
     :param services: Services to add to the final image
     :param variables: Build arguments passed to the docker builder
     :param actions: Actions (and their variables) to add to the final image
-    :param firehole_config: Config for Firehole, otherwise it won't run.
+    :param firehole_config: Config for Firehole, otherwise it won't run
     :param image_tag: Tag of the final image
+    :param packages: Packages to add to the final image
     :return: All built image tags
     """
     if forbidden_services := check_for_forbidden_services(services):
@@ -137,7 +147,7 @@ def build(
 
     build_id = uuid1().fields[0]
     repository = f"{repository}{'' if repository.endswith('/') else '/'}{build_id}/"
-    image_tags = build_services(str(build_id), repository, services, variables, firehole_config)
+    image_tags = build_services(str(build_id), repository, services, variables, firehole_config, packages)
     image_tags += perform_actions(str(build_id), image_tags[-1], actions)
     if image_tag:
         tag_docker_image(image_tags[-1], image_tag)
