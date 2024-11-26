@@ -58,13 +58,12 @@ def loading(stopped: Event):
 
 def main():
     parser = ArgumentParser(description="Forge multiple services into a single image.")
-    parser.add_argument("-t", "--tag", help="Tag the final image - just like in Docker. (ignores `--repository`)")
-    parser.add_argument("services", nargs="*", help="Services to use.")
+    parser.add_argument("tag", help="Tag the image - just like in Docker.")
+    parser.add_argument("-s", "--service", default=list(), help="Service to use.")
     parser.add_argument(
         "-v", "--variable", action="append", default=list(), help="Variable for the image. (MY_VAR=var)"
     )
-    parser.add_argument("-fc", "--firehole-config", help="Config for Firehole, otherwise it won't run.")
-    parser.add_argument("-r", "--repository", default="cif", help="Docker image repository (image prefix).")
+    parser.add_argument("-fc", "--firehole-config", help="Config for Firehole. Also adds it to the image.")
     parser.add_argument(
         "-a",
         "--action",
@@ -75,15 +74,16 @@ def main():
     parser.add_argument("-ls", "--list-services", action="store_true", help="Show possible services.")
     parser.add_argument("-la", "--list-actions", action="store_true", help="Show possible actions.")
     parser.add_argument("-p", "--package", action="append", default=list(), help="System package to install.")
-    list_services = parser.parse_args().list_services
-    list_actions = parser.parse_args().list_actions
-    services = parser.parse_args().services
-    variables = parser.parse_args().variable
-    actions = parser.parse_args().action
-    firehole_config = parser.parse_args().firehole_config
-    image_repository = parser.parse_args().repository
-    image_tag = parser.parse_args().tag
-    packages = parser.parse_args().package
+    parser.add_argument("-k", "--keep-images", action="store_true", help="Do not remove partial build images.")
+    list_services: bool = parser.parse_args().list_services
+    list_actions: bool = parser.parse_args().list_actions
+    services: list[str] = parser.parse_args().service
+    variables: list[str] = parser.parse_args().variable
+    actions: list[str] = parser.parse_args().action
+    firehole_config: str = parser.parse_args().firehole_config
+    image_tag: str = parser.parse_args().tag
+    packages: list[str] = parser.parse_args().package
+    clean_up: bool = not parser.parse_args().keep_images
 
     if list_services:
         pp(available_services())
@@ -91,10 +91,6 @@ def main():
 
     if list_actions:
         pp(available_actions())
-        return
-
-    if not image_repository:
-        print("Repository mustn't be empty")
         return
 
     parsed_image_variables = parse_image_variables(variables)
@@ -105,12 +101,10 @@ def main():
     loading_thread.start()
 
     try:
-        tags = build(
-            image_repository, services, parsed_image_variables, parsed_actions, firehole_config, image_tag, packages
-        )
+        tags = build(services, parsed_image_variables, parsed_actions, firehole_config, image_tag, packages, clean_up)
     except ValueError as ex:
         print(str(ex))
     else:
-        print(f"All created tags:\n{chr(10).join(tags)}")
+        print(f"Created tags:\n{chr(10).join(tags)}")
     finally:
         stop_loading.set()
