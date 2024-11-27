@@ -4,6 +4,9 @@ from os.path import join, isdir
 from cif.settings import PATH_SERVICES, PATH_ACTIONS
 
 
+FileCopy = tuple[str, str, str | int | None, str | int | None, int | None]
+
+
 def parse_dockerfile_variables(dockerfile_path: str):
     with open(join(dockerfile_path, "Dockerfile")) as dockerfile:
         environment: dict[str, str] = dict()

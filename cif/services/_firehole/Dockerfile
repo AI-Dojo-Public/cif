@@ -10,4 +10,3 @@ RUN apt update && apt install -y \
 RUN pipx install firehole --index-url https://gitlab.ics.muni.cz/api/v4/projects/6823/packages/pypi/simple
 
 COPY entrypoint.sh /entrypoints
-COPY config.yml /firehole-config.yml

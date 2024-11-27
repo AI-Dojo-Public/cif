@@ -5,7 +5,7 @@ from threading import Thread, Event
 from time import sleep
 
 from cif.builder import build
-from cif.helpers import available_services, available_actions
+from cif.helpers import available_services, available_actions, FileCopy
 
 
 def parse_image_variables(variables_raw: list[str]) -> dict[str, str]:
@@ -56,6 +56,25 @@ def loading(stopped: Event):
         print("\033[F" * num_of_frames, end="")
 
 
+def parse_files(raw_files: list[str]) -> list[FileCopy]:
+    files: list[FileCopy] = list()
+    for file in raw_files:
+        match file.split(":", 4):
+            case [host_path, image_path]:
+                files.append((host_path, image_path, None, None, None))
+            case [host_path, image_path, user, group, mode]:
+                files.append(
+                    (host_path, image_path, user if user else None, group if group else None, mode if mode else None)
+                )
+            case _:
+                raise ValueError(
+                    f"File is not correctly defined: {file}\n"
+                    f"You need `/host/path:/image/path:username:groupname:mode` or `/host/path:/image/path`"
+                )
+
+    return files
+
+
 def main():
     parser = ArgumentParser(description="Forge multiple services into a single image.")
     parser.add_argument("tag", help="Tag the image - just like in Docker.")
@@ -74,7 +93,17 @@ def main():
     parser.add_argument("-ls", "--list-services", action="store_true", help="Show possible services.")
     parser.add_argument("-la", "--list-actions", action="store_true", help="Show possible actions.")
     parser.add_argument("-p", "--package", action="append", default=list(), help="System package to install.")
-    parser.add_argument("-k", "--keep-images", action="store_true", help="Do not remove partial build images.")
+    parser.add_argument(
+        "-f",
+        "--file",
+        action="append",
+        default=list(),
+        help="Add file to the image (/host/path:/image/path:username:groupname:mode). "
+        "To leave out the parameter, simply skip it (e.g. /file.txt:/file.txt:::440).",
+    )
+    parser.add_argument(
+        "-k", "--keep-images", action="store_true", help="Keep artifacts from the build (tmp images, tmp files)."
+    )
     list_services: bool = parser.parse_args().list_services
     list_actions: bool = parser.parse_args().list_actions
     services: list[str] = parser.parse_args().service
@@ -84,6 +113,7 @@ def main():
     image_tag: str = parser.parse_args().tag
     packages: list[str] = parser.parse_args().package
     clean_up: bool = not parser.parse_args().keep_images
+    files: list[str] = parser.parse_args().file
 
     if list_services:
         pp(available_services())
@@ -93,6 +123,7 @@ def main():
         pp(available_actions())
         return
 
+    parsed_files = parse_files(files)
     parsed_image_variables = parse_image_variables(variables)
     parsed_actions = parse_actions(actions)
 
@@ -101,7 +132,16 @@ def main():
     loading_thread.start()
 
     try:
-        tags = build(services, parsed_image_variables, parsed_actions, firehole_config, image_tag, packages, clean_up)
+        tags = build(
+            services,
+            parsed_image_variables,
+            parsed_actions,
+            firehole_config,
+            image_tag,
+            packages,
+            parsed_files,
+            clean_up,
+        )
     except ValueError as ex:
         print(str(ex))
     else:
