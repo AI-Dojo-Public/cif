@@ -54,7 +54,18 @@ def build_docker_image(image_directory: str, image_tag: str, variables: dict[str
 
 def remove_partial_build_images(build_id: str):
     process = subprocess.run(
-        f"docker rmi $(docker image ls -q --filter 'label=cif_build={build_id}' --filter 'label=build=partial')",
+        f"docker image ls -q --filter 'label=cif_build={build_id}' --filter 'label=build=partial'",
+        shell=True,
+        capture_output=True,
+    )
+    if process.returncode != 0:
+        raise Exception(
+            f"Unable to list build images for build {build_id}.\n{process.stdout.decode()}\n{process.stderr.decode()}"
+        )
+
+    images = process.stdout.decode().split("\n")
+    process = subprocess.run(
+        f"docker rmi {' '.join(images)}",
         shell=True,
         capture_output=True,
     )
