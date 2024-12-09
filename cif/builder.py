@@ -39,7 +39,7 @@ def update_dockerfile(definition_directory: str, image_name: str, previous_tag: 
 
 def build_docker_image(image_directory: str, image_tag: str, variables: dict[str, str], labels: list[str]) -> None:
     build_args = " ".join([f"--build-arg {variable}={value}" for variable, value in variables.items()])
-    build_labels = " ".join([f"--label '{label}'" for label in labels])
+    build_labels = " ".join([f"--label {label}" for label in labels])
     process = subprocess.run(
         f"docker build {build_labels} --tag {image_tag} {build_args} .",
         shell=True,
@@ -54,7 +54,7 @@ def build_docker_image(image_directory: str, image_tag: str, variables: dict[str
 
 def remove_partial_build_images(build_id: str):
     process = subprocess.run(
-        f"docker image ls -q --filter 'label=cif_build={build_id}' --filter 'label=build=partial'",
+        f"docker image ls -q --filter label=cif_build={build_id} --filter label=build=partial",
         shell=True,
         capture_output=True,
     )
