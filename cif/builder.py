@@ -83,6 +83,9 @@ def create_tmp_files(files: list[FileCopy], image_directory: str) -> list[str]:
     for host_path, image_path, user, group, mode in files:
         destination: str = shutil.copy2(host_path, tmp_files_directory)
         context_destination = destination.removeprefix(image_directory)
+        if os.name == "nt":
+            context_destination.replace("\\", "/")
+
         chmod = f"--chmod={mode}" if mode else ""
         chown = f"--chown={user if user else ''}{f':{group}' if group else ''}"
         instructions.append(f"COPY {chown} {chmod} {context_destination} {image_path}\n")
