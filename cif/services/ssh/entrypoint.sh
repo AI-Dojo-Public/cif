@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cat <<EOF >> /etc/ssh/sshd_config
 PasswordAuthentication yes
 ChallengeResponseAuthentication yes
