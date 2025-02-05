@@ -1,3 +1,5 @@
+#!/bin/bash
+
 mysqld -D --port=$MYSQL_PORT --bind-address=$MYSQL_HOST
 
 for file in /tmp/mysql/*.sql; do

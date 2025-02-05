@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cif"
-version = "0.8.3"
+version = "0.9.0"
 description = ""
 authors = ["Jiri Raja <raja@ics.muni.cz>"]
 readme = "README.md"
@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.8.0"
+ruff = "^0.8.1"
 
 [tool.poetry.scripts]
 cif = 'cif.cli:main'

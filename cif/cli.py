@@ -106,14 +106,14 @@ def main():
     )
     list_services: bool = parser.parse_args().list_services
     list_actions: bool = parser.parse_args().list_actions
-    services: list[str] = parser.parse_args().service
-    variables: list[str] = parser.parse_args().variable
-    actions: list[str] = parser.parse_args().action
+    services: list[str] | str = parser.parse_args().service
+    variables: list[str] | str = parser.parse_args().variable
+    actions: list[str] | str = parser.parse_args().action
     firehole_config: str = parser.parse_args().firehole_config
     image_tag: str = parser.parse_args().tag
-    packages: list[str] = parser.parse_args().package
+    packages: list[str] | str = parser.parse_args().package
     clean_up: bool = not parser.parse_args().keep_images
-    files: list[str] = parser.parse_args().file
+    files: list[str] | str = parser.parse_args().file
 
     if list_services:
         pp(available_services())
@@ -122,6 +122,21 @@ def main():
     if list_actions:
         pp(available_actions())
         return
+
+    if not isinstance(services, list):
+        services = [services]
+
+    if not isinstance(variables, list):
+        variables = [variables]
+
+    if not isinstance(actions, list):
+        actions = [actions]
+
+    if not isinstance(packages, list):
+        packages = [packages]
+
+    if not isinstance(files, list):
+        files = [files]
 
     parsed_files = parse_files(files)
     parsed_image_variables = parse_image_variables(variables)

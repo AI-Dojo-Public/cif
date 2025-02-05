@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Set environment variables
 cat <<EOF >> /etc/apache2/envvars
 export TCHAT_DB_HOST=$TCHAT_DB_HOST

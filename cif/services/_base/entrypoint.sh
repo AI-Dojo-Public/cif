@@ -3,7 +3,8 @@
 for file in /entrypoints/*; do
     if [ -f "$file" ]; then
         echo "$file"
-        /bin/bash $file
+        chmod +x $file
+        $file
     fi
 done
 

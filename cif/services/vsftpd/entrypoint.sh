@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cat <<EOF >> /etc/vsftpd.conf
 listen_port=$VSFTPD_PORT
 listen_address=$VSFTPD_HOST

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cat <<EOF >> /etc/apache2/envvars
 export WORDPRESS_DB_USER=$WORDPRESS_DB_USER
 export WORDPRESS_DB_PASSWORD=$WORDPRESS_DB_PASSWORD
