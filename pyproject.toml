@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cif"
-version = "0.9.0"
+version = "0.10.0"
 description = ""
 authors = ["Jiri Raja <raja@ics.muni.cz>"]
 readme = "README.md"
@@ -18,5 +18,8 @@ cif = 'cif.cli:main'
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
+[tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
+extend-select = ["E501"]
