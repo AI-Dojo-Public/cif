@@ -78,7 +78,7 @@ def parse_files(raw_files: list[str]) -> list[FileCopy]:
 def main():
     parser = ArgumentParser(description="Forge multiple services into a single image.")
     parser.add_argument("tag", help="Tag the image - just like in Docker.")
-    parser.add_argument("-s", "--service", default=list(), help="Service to use.")
+    parser.add_argument("-s", "--service", action="append", default=list(), help="Service to use.")
     parser.add_argument(
         "-v", "--variable", action="append", default=list(), help="Variable for the image. (MY_VAR=var)"
     )
@@ -123,20 +123,20 @@ def main():
         pp(available_actions())
         return
 
-    if not isinstance(services, list):
-        services = [services]
-
-    if not isinstance(variables, list):
-        variables = [variables]
-
-    if not isinstance(actions, list):
-        actions = [actions]
-
-    if not isinstance(packages, list):
-        packages = [packages]
-
-    if not isinstance(files, list):
-        files = [files]
+    # if not isinstance(services, list):
+    #     services = [services]
+    #
+    # if not isinstance(variables, list):
+    #     variables = [variables]
+    #
+    # if not isinstance(actions, list):
+    #     actions = [actions]
+    #
+    # if not isinstance(packages, list):
+    #     packages = [packages]
+    #
+    # if not isinstance(files, list):
+    #     files = [files]
 
     parsed_files = parse_files(files)
     parsed_image_variables = parse_image_variables(variables)
