@@ -160,7 +160,6 @@ def build(
     services: list[str],
     variables: dict[str, str],
     actions: list[tuple[str, dict[str, str]]],
-    firehole_config: str,
     final_tag: str,
     packages: list[str],
     files: list[FileCopy],
@@ -180,7 +179,6 @@ def build(
     :param services: Services to add to the final image
     :param variables: Build arguments passed to the docker builder
     :param actions: Actions (and their variables) to add to the final image
-    :param firehole_config: Config for Firehole, otherwise it won't run
     :param final_tag: Tag of the final image
     :param packages: Packages to add to the final image
     :param files: Files to add to the final image (host_path, image_path, username, groupname, mode)
@@ -191,11 +189,8 @@ def build(
         raise ValueError(f"Services {forbidden_services} are forbidden.")
 
     services = ["_base"] + services
-    if firehole_config:
-        services.append("_firehole")
-        files.append((firehole_config, "/firehole-config.yml", None, None, None))
-
     build_id = str(uuid1().fields[0])
+
     image_tags = build_services(build_id, services, variables, packages)
     image_tags += perform_actions(build_id, image_tags[-1], actions)
 

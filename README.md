@@ -16,10 +16,10 @@ cif -h
 ```
 
 ### Example
-FireHole config:
+Firehole config:
 ```yaml
 applications:
-  - type: http_s
+  - type: http
     host: 0.0.0.0
     port: 80
     origin_host: 127.0.0.1
@@ -31,13 +31,15 @@ applications:
 
 ```shell
 cif \
-  --firehole-config /tmp/firehole-config.yml \
-  --tag my-image-tag \
+  --service mysql \
+  --service wordpress \
+  --service firehole \
+  --file /tmp/firehole-config.yml:/firehole-config.yml \
   --variable WORDPRESS_HOSTNAME=127.0.0.1 \
   --variable WORDPRESS_HOST=127.0.0.1 \
   --variable WORDPRESS_PORT=8000 \
   --variable WORDPRESS_TITLE=asd \
-  mysql wordpress
+  my-image-tag
 
 ```
 
