@@ -1,6 +1,17 @@
 # CIF
 
-Custom Image Forge
+Custom Image Forge.
+
+Its purpose is to build Docker images with the services and packages you define. You can also customize the final image with actions.  
+The latest ubuntu image is used as a base. To make sure the final image is as specified, we remove the default configuration (e.g. the ubuntu user).
+
+**Services**: A service is a service (as you would expect). It is a predefined Dockerfile with default settings. It can also be configured with environment variables. Each service can be specified once a build and the variables are shared.
+
+**Actions**: An action can be anything. For example creation of a user account. It works on the same principles as a service, but you can run it multiple times with different variables (if not stated otherwise).
+
+**Packages**: You can also specify additional packages to install. This is done with `apt`.
+
+CIF can also deploy firehole alongside with the other services. You only need to specify its configuration file. Doing so will allow you to make the services vulnerable.
 
 ## Installation
 Requires Python >=3.11, [pipx](https://pipx.pypa.io/latest/installation/), and [Docker](https://docs.docker.com/engine/install/).
